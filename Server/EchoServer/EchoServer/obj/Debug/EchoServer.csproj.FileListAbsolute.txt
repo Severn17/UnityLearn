@@ -1,0 +1,7 @@
+F:\CodingTest\Unity\UnityLearn2\Server\EchoServer\EchoServer\bin\Debug\EchoServer.exe.config
+F:\CodingTest\Unity\UnityLearn2\Server\EchoServer\EchoServer\bin\Debug\EchoServer.exe
+F:\CodingTest\Unity\UnityLearn2\Server\EchoServer\EchoServer\bin\Debug\EchoServer.pdb
+F:\CodingTest\Unity\UnityLearn2\Server\EchoServer\EchoServer\obj\Debug\EchoServer.csprojAssemblyReference.cache
+F:\CodingTest\Unity\UnityLearn2\Server\EchoServer\EchoServer\obj\Debug\EchoServer.csproj.CoreCompileInputs.cache
+F:\CodingTest\Unity\UnityLearn2\Server\EchoServer\EchoServer\obj\Debug\EchoServer.exe
+F:\CodingTest\Unity\UnityLearn2\Server\EchoServer\EchoServer\obj\Debug\EchoServer.pdb
