@@ -33,6 +33,7 @@ public class Echo2 : MonoBehaviour
             Socket _socket = (Socket) ar.AsyncState;
             _socket.EndConnect(ar);
             Debug.Log("Socket Connect Success");
+            socket.BeginReceive(readBuff, 0, 1024,0, ReceiveCallBack, socket);
         }
         catch (SocketException e)
         {
@@ -69,7 +70,8 @@ public class Echo2 : MonoBehaviour
         {
             Socket _socket = (Socket) ar.AsyncState;
             int count = _socket.EndReceive(ar);
-            recvStr = Encoding.Default.GetString(readBuff, 0, count);
+            string s = Encoding.Default.GetString(readBuff, 0, count);
+            recvStr = s + "\n" + recvStr;
             _socket.BeginReceive(readBuff, 0, 1024, 0, ReceiveCallBack, _socket);
         }
         catch (SocketException e)
