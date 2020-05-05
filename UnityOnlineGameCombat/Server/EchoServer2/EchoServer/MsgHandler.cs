@@ -54,4 +54,43 @@ public static class MsgHandler
             Program.Send(cs, sendStr);
         }
     }
+    public static void MsgAttack(ClientState c, string msgArgs)
+    {
+        string sendStr = "Attack|" + msgArgs;
+        foreach (ClientState cs in Program.clients.Values)
+        {
+            Program.Send(cs, sendStr);
+        }
+    }
+    public static void MsgHit(ClientState c, string msgArgs)
+    {
+        string[] split = msgArgs.Split(',');
+        string attDesc = split[0];
+        string hitDesc = split[1];
+        // 找出被攻击的角色
+        ClientState hitCS = null;
+        foreach (ClientState cs in Program.clients.Values)
+        {
+            if (cs.socket.RemoteEndPoint.ToString() == hitDesc)
+            {
+                hitCS = cs;
+            }
+        }
+
+        if (hitCS == null)
+        {
+            return;
+        }
+        //扣血
+        hitCS.hp -= 25;
+        //死亡
+        if (hitCS.hp <= 0)
+        {
+            string sendStr = "Die|" + hitCS.socket.RemoteEndPoint.ToString();
+            foreach (ClientState cs in Program.clients.Values)
+            {
+                Program.Send(cs, sendStr);
+            }
+        }
+    }
 }

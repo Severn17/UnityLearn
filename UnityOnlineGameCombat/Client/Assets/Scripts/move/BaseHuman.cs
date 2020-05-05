@@ -10,6 +10,32 @@ public class BaseHuman : MonoBehaviour
     public float speed = 1.2f;
     private Animator animator;
     public string desc = "";
+    // 是否正在攻击
+    internal bool isAttacking = false;
+    internal float attackTime = float.MinValue;
+
+    public void Attack()
+    {
+        isAttacking = true;
+        attackTime = Time.time;
+        animator.SetBool("isAttacking", true);
+    }
+
+    public void AttackUpdate()
+    {
+        if (!isAttacking)
+        {
+            return;
+        }
+
+        if (Time.time - attackTime < 1.2f)
+        {
+            return;
+        }
+
+        isAttacking = false;
+        animator.SetBool("isAttacking", false);
+    }
 
     public void MoveTo(Vector3 pos)
     {
@@ -43,5 +69,6 @@ public class BaseHuman : MonoBehaviour
     protected void Update()
     {
         MoveUpdate();
+        AttackUpdate();
     }
 }
