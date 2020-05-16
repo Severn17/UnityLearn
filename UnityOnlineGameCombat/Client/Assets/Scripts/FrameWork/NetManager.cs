@@ -27,6 +27,8 @@ namespace FrameWork
 
         static bool isConnecting = false;
 
+        static bool isClosing = false;
+
         public static void AddEventListener(NetEvent netEvent, EventListener listener)
         {
             if (eventListeners.ContainsKey(netEvent))
@@ -115,5 +117,33 @@ namespace FrameWork
             // 是否正在连接
             isConnecting = true;
         }
+
+        public static void Close()
+        {
+            //状态判断
+            if (socket == null || !socket.Connected)
+            {
+                return;
+            }
+            if (isConnecting)
+            {
+                return;
+            }
+            // 还有数据
+            if (writeQueue.Count > 0)
+            {
+                isClosing = true;
+            }
+            else
+            {
+                socket.Close();
+                FireEvnet(NetEvent.Close, "");
+            }
+        }
+        public void OnCloseClick()
+        {
+            NetManager.Close();
+        }
+
     }
 }
