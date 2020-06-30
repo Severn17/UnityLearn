@@ -98,7 +98,7 @@ public class ByteArray : MonoBehaviour
     }
     
 
-    private void ReSize(int size)
+    public void ReSize(int size)
     {
         if(size<length) return;
         if(size<initSize) return;
