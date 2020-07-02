@@ -1,0 +1,6 @@
+F:\CodingTest\Unity\UnityLearn\UnityOnlineGameCombat\Server\Game\Game\bin\Debug\Game.exe
+F:\CodingTest\Unity\UnityLearn\UnityOnlineGameCombat\Server\Game\Game\bin\Debug\Game.pdb
+F:\CodingTest\Unity\UnityLearn\UnityOnlineGameCombat\Server\Game\Game\obj\Debug\Game.csprojAssemblyReference.cache
+F:\CodingTest\Unity\UnityLearn\UnityOnlineGameCombat\Server\Game\Game\obj\Debug\Game.csproj.CoreCompileInputs.cache
+F:\CodingTest\Unity\UnityLearn\UnityOnlineGameCombat\Server\Game\Game\obj\Debug\Game.exe
+F:\CodingTest\Unity\UnityLearn\UnityOnlineGameCombat\Server\Game\Game\obj\Debug\Game.pdb
