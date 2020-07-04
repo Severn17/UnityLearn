@@ -12,6 +12,8 @@ class NetManager
     public static Dictionary<Socket, ClientState> clients = new Dictionary<Socket, ClientState>();
     //Select的检查列表
     static List<Socket> checkRead = new List<Socket>();
+    
+    public static long pingInterval = 30;
 
     public static void StartLoop(int listenPort)
     {
@@ -94,7 +96,7 @@ class NetManager
         readBuff.CheckAndMoveBytes();
     }
 
-    private static void Close(ClientState state)
+    public static void Close(ClientState state)
     {
         // 消息分发
         MethodInfo mei = typeof(EventHandler).GetMethod("OnDisconnect");
@@ -173,5 +175,40 @@ class NetManager
         {
             checkRead.Add(s.socket);
         }
+    }
+
+    public static void Send(ClientState cs,MsgBase msg)
+    {
+        if (cs == null)
+        {
+            return;
+        }
+
+        if (!cs.socket.Connected)
+        {
+            return;
+        }
+        // 数据编码
+        byte[] nameBytes = MsgBase.EncodeName(msg);
+        byte[] bodyBytes = MsgBase.Encode(msg);
+        int len = nameBytes.Length + bodyBytes.Length;
+        byte[] sendBytes = new byte [2 + len];
+        // 组装长度
+        sendBytes[0] = (byte) (len % 256);
+        sendBytes[1] = (byte) (len / 256);
+        // 组装名字
+        Array.Copy(nameBytes,0,sendBytes,2,nameBytes.Length);
+        // 组装消息体
+        Array.Copy(bodyBytes, 0, sendBytes, 2+nameBytes.Length, bodyBytes.Length);
+        //为简化代码，不设置回调
+        try{
+            cs.socket.BeginSend(sendBytes,0, sendBytes.Length, 0, null, null);
+        }catch(SocketException ex){
+            Console.WriteLine("Socket Close on BeginSend" + ex.ToString()); 
+        }
+    }
+    public static long GetTimeStamp() {
+        TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
+        return Convert.ToInt64(ts.TotalSeconds);
     }
 }

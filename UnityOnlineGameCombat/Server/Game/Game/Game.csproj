@@ -45,6 +45,8 @@
     <Compile Include="logic\BattleMsgHandler.cs" />
     <Compile Include="logic\EventHandler.cs" />
     <Compile Include="logic\MsgHandler.cs" />
+    <Compile Include="logic\Player.cs" />
+    <Compile Include="logic\PlayerData.cs" />
     <Compile Include="logic\SysMsgHandler.cs" />
     <Compile Include="net\ByteArray.cs" />
     <Compile Include="net\ClientState.cs" />
