@@ -4,3 +4,5 @@ F:\CodingTest\Unity\UnityLearn\UnityOnlineGameCombat\Server\Game\Game\obj\Debug\
 F:\CodingTest\Unity\UnityLearn\UnityOnlineGameCombat\Server\Game\Game\obj\Debug\Game.csproj.CoreCompileInputs.cache
 F:\CodingTest\Unity\UnityLearn\UnityOnlineGameCombat\Server\Game\Game\obj\Debug\Game.exe
 F:\CodingTest\Unity\UnityLearn\UnityOnlineGameCombat\Server\Game\Game\obj\Debug\Game.pdb
+F:\CodingTest\Unity\UnityLearn\UnityOnlineGameCombat\Server\Game\Game\bin\Debug\MySql.Data.dll
+F:\CodingTest\Unity\UnityLearn\UnityOnlineGameCombat\Server\Game\Game\obj\Debug\Game.csproj.CopyComplete

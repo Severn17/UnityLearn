@@ -32,6 +32,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>E:\unity资源\Unity3D网络游戏实战（第二版）\软件和工具\软件和工具\MySql.Data.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -42,11 +46,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="db\DbManager.cs" />
     <Compile Include="logic\BattleMsgHandler.cs" />
     <Compile Include="logic\EventHandler.cs" />
     <Compile Include="logic\MsgHandler.cs" />
     <Compile Include="logic\Player.cs" />
     <Compile Include="logic\PlayerData.cs" />
+    <Compile Include="logic\PlayerManager.cs" />
     <Compile Include="logic\SysMsgHandler.cs" />
     <Compile Include="net\ByteArray.cs" />
     <Compile Include="net\ClientState.cs" />
