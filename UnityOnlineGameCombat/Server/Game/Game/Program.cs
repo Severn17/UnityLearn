@@ -1,4 +1,6 @@
-﻿namespace Game
+﻿using System;
+
+namespace Game
 {
     internal class Program
     {
@@ -16,6 +18,19 @@
             {
                 return;
             }
+            // 测试
+            // if (DbManager.Register("lpy","123456"))
+            // {
+            //     Console.WriteLine("注册成功");
+            // }
+            // if (DbManager.CreatePlayer("lpy"))
+            // {
+            //     Console.WriteLine("创建成功");
+            // }
+            DbManager.CreatePlayer("aglab");
+            PlayerData pd = DbManager.GetPlayerData("aglab");
+            pd.coin = 256;
+            DbManager.UpdatePlayerData("aglab", pd);
             NetManager.StartLoop(888);
         }
     }
