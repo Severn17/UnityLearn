@@ -17,34 +17,31 @@ class NetManager
 
     public static void StartLoop(int listenPort)
     {
-        // Socket
-        listenfd = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        // Bind
+        //Socket
+        listenfd = new Socket(AddressFamily.InterNetwork,
+            SocketType.Stream, ProtocolType.Tcp);
+        //Bind
         IPAddress ipAdr = IPAddress.Parse("0.0.0.0");
-        IPEndPoint iPEp = new IPEndPoint(ipAdr, listenPort);
-        listenfd.Bind(iPEp);
-        // Listen
+        IPEndPoint ipEp = new IPEndPoint(ipAdr, listenPort);
+        listenfd.Bind(ipEp);
+        //Listen
         listenfd.Listen(0);
         Console.WriteLine("[服务器]启动成功");
-        // 循环
-        while (true)
-        {
-            ResetCheckRead(); //重置
+        //循环
+        while(true){
+            ResetCheckRead();  //重置checkRead
             Socket.Select(checkRead, null, null, 1000);
-            // 检查可读对象
-            for (int i = checkRead.Count - 1; i >= 0; i--)
-            {
+            //检查可读对象
+            for(int i = checkRead.Count-1; i>=0; i--){
                 Socket s = checkRead[i];
-                if (s==listenfd)
-                {
+                if(s == listenfd){
                     ReadListenfd(s);
                 }
-                else
-                {
+                else{
                     ReadClientfd(s);
                 }
             }
-            // 超时
+            //超时
             Timer();
         }
     }
@@ -151,16 +148,14 @@ class NetManager
 
     private static void ReadListenfd(Socket s)
     {
-        try
-        {
+        try{
             Socket clientfd = listenfd.Accept();
             Console.WriteLine("Accept " + clientfd.RemoteEndPoint.ToString());
             ClientState state = new ClientState();
             state.socket = clientfd;
-            clients.Add(clientfd,state);
-        }
-        catch (Exception ex)
-        {
+            state.lastPingTime = GetTimeStamp();
+            clients.Add(clientfd, state);
+        }catch(SocketException ex){
             Console.WriteLine("Accept fail" + ex.ToString());
         }
     }

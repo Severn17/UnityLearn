@@ -9,6 +9,13 @@ public partial class EventHandler
     public static void OnDisconnect(ClientState c)
     {
         Console.WriteLine("Close");
+        //Player下线
+        if(c.player != null){
+            //保存数据
+            DbManager.UpdatePlayerData(c.player.id, c.player.data);
+            //移除
+            PlayerManager.RemovePlayer(c.player.id);
+        }
     }
 
     public static void OnTimer(){
