@@ -28,7 +28,8 @@ namespace Tank
             targetPos.y += distance.y;
 
             Vector3 cameraPos = camera.transform.position;
-            cameraPos = (cameraPos, targetPos, Time.deltaTime * speed);
+            cameraPos = Vector3.Lerp(cameraPos, targetPos, Time.deltaTime * speed);
+            //cameraPos = (cameraPos, targetPos, Time.deltaTime * speed);
             camera.transform.position = cameraPos;
             camera.transform.LookAt(pos + offset);
         }
