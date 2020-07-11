@@ -86,15 +86,10 @@ namespace Tank
 		MsgLogin msg = (MsgLogin)msgBase;
 		if(msg.result == 0){
 			Debug.Log("登陆成功");
-			//进入游戏
-			//添加坦克
-			GameObject tankObj = new GameObject("myTank");
-			CtrlTank ctrlTank = tankObj.AddComponent<CtrlTank>();
-			ctrlTank.Init("tankPrefab");
-			//设置相机
-			tankObj.AddComponent<CameraFollow>();
 			//设置id
 			GameMain.id = msg.id;
+			//打开房间列表
+			PanelManager.Open<RoomListPanel>();
 			//关闭界面
 			Close();
 		}
