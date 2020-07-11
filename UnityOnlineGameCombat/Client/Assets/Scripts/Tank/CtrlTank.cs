@@ -17,6 +17,8 @@ namespace Tank
 
         private void FireUpdate()
         {
+            if (IsDie())
+                return;
             if (!Input.GetKey(KeyCode.Space))
             {
                 return;
@@ -32,6 +34,8 @@ namespace Tank
 
         private void TurretUpdate()
         {
+            if (IsDie())
+                return;
             float axis = 0;
             if (Input.GetKey(KeyCode.Q))
             {
@@ -49,6 +53,8 @@ namespace Tank
 
         private void MoveUpdate()
         {
+            if (IsDie())
+                return;
             float x = Input.GetAxis("Horizontal");
             transform.Rotate(0,x*steer*Time.deltaTime,0);
             float y = Input.GetAxis("Vertical");

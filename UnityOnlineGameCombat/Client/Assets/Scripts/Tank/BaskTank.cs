@@ -17,6 +17,8 @@ namespace Tank
         
         public float fireCd = 0.5f;
         public float lastFireTime = 0;
+
+        public float hp = 100;
         void Start()
         {
             
@@ -63,9 +65,22 @@ namespace Tank
             return bullet;
         }
 
-        private bool IsDie()
+        public bool IsDie()
         {
-            return false;
+            return hp <= 0;
+        }
+
+        public void Attacked(float att)
+        {
+            if (IsDie())
+                return;
+            hp -= att;
+            if (IsDie())
+            {
+                GameObject obj = ResManager.LoadPrefab("explosion");
+                GameObject explosion = Instantiate(obj, transform.position, transform.rotation);
+                explosion.transform.SetParent(transform);
+            }
         }
     }
 }
