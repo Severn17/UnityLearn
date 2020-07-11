@@ -7,4 +7,5 @@
      // 胜利数
      public int win = 0;
      // 失败数
+     public int lost = 0;
 }

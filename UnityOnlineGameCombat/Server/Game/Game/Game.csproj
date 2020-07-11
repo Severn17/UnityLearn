@@ -55,6 +55,8 @@
     <Compile Include="logic\Player.cs" />
     <Compile Include="logic\PlayerData.cs" />
     <Compile Include="logic\PlayerManager.cs" />
+    <Compile Include="logic\Room.cs" />
+    <Compile Include="logic\RoomManager.cs" />
     <Compile Include="logic\SysMsgHandler.cs" />
     <Compile Include="net\ByteArray.cs" />
     <Compile Include="net\ClientState.cs" />
@@ -65,6 +67,7 @@
     <Compile Include="proto\BattleMsg.cs" />
     <Compile Include="proto\LoginMsg.cs" />
     <Compile Include="proto\NotepadMsg.cs" />
+    <Compile Include="proto\RoomMsg.cs" />
     <Compile Include="proto\SysMsg.cs" />
   </ItemGroup>
   <ItemGroup />
