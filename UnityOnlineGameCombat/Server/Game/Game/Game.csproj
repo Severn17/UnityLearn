@@ -58,6 +58,7 @@
     <Compile Include="logic\Room.cs" />
     <Compile Include="logic\RoomManager.cs" />
     <Compile Include="logic\RoomMsgHandle.cs" />
+    <Compile Include="logic\SyncMsgHandle.cs" />
     <Compile Include="logic\SysMsgHandler.cs" />
     <Compile Include="net\ByteArray.cs" />
     <Compile Include="net\ClientState.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="proto\LoginMsg.cs" />
     <Compile Include="proto\NotepadMsg.cs" />
     <Compile Include="proto\RoomMsg.cs" />
+    <Compile Include="proto\SyncMsg.cs" />
     <Compile Include="proto\SysMsg.cs" />
   </ItemGroup>
   <ItemGroup />

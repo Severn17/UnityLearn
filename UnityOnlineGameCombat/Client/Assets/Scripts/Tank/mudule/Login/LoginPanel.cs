@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace Tank
-{
-	public class LoginPanel : BasePanel {
+public class LoginPanel : BasePanel {
 	//账号输入框
 	private InputField idInput;
 	//密码输入框
@@ -98,6 +96,5 @@ namespace Tank
 		}
 	}
 
-}
 }
 

@@ -1,14 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace Tank
-{
-	using System.Collections;
-	using System.Collections.Generic;
-	using UnityEngine;
-	using UnityEngine.UI;
-
-	public class RoomPanel : BasePanel
+public class RoomPanel : BasePanel
 	{
 		//开战按钮
 		private Button startButton;
@@ -163,4 +156,3 @@ namespace Tank
 			}
 		}
 	}
-}

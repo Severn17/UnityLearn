@@ -1,136 +1,193 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Tank
+public class BattleManager : MonoBehaviour
 {
-    public class BattleManager : MonoBehaviour
+    public static Dictionary<string, BaseTank> tanks = new Dictionary<string, BaseTank>();
+
+    public static void Init()
     {
-        public static Dictionary<string,BaskTank> tanks = new Dictionary<string, BaskTank>();
+        //添加监听
+        NetManager.AddMsgListener("MsgEnterBattle", OnMsgEnterBattle);
+        NetManager.AddMsgListener("MsgBattleResult", OnMsgBattleResult);
+        NetManager.AddMsgListener("MsgLeaveBattle", OnMsgLeaveBattle);
 
-        public static void Init()
+        NetManager.AddMsgListener("MsgSyncTank", OnMsgSyncTank);
+        NetManager.AddMsgListener("MsgFire", OnMsgFire);
+        NetManager.AddMsgListener("MsgHit", OnMsgHit);
+    }
+
+    private static void OnMsgSyncTank(MsgBase msgBase)
+    {
+        MsgSyncTank msg = (MsgSyncTank) msgBase;
+        if (msg.id == GameMain.id)
         {
-            NetManager.AddMsgListener("MsgEnterBattle",OnMsgEnterBattle);
-            NetManager.AddMsgListener("MsgBattleResult",OnMsgBattleResult);
-            NetManager.AddMsgListener("MsgLeaveBattle",OnMsgLeaveBattle);
+            return;
         }
 
-        public static void AddTank(string id, BaskTank tank)
+        // 找坦克
+        SyncTank tank = (SyncTank) GetTank(msg.id);
+        if (tank == null)
         {
-            tanks[id] = tank;
+            return;
         }
 
-        public static void RemoveTank(string id)
+        // 同步
+        tank.SyncPos(msg);
+    }
+
+    private static void OnMsgFire(MsgBase msgBase)
+    {
+        MsgFire msg = (MsgFire) msgBase;
+        if (msg.id == GameMain.id)
         {
-            tanks.Remove(id);
+            return;
         }
 
-        public static BaskTank GetTank(string id)
+        // 找坦克
+        SyncTank tank = (SyncTank) GetTank(msg.id);
+        if (tank == null)
         {
-            if (tanks.ContainsKey(id))
-            {
-                return tanks[id];
-            }
-
-            return null;
+            return;
         }
 
-        public static BaskTank GetCtrlTank()
+        // 同步
+        tank.SyncFire(msg);
+    }
+
+    private static void OnMsgHit(MsgBase msgBase)
+    {
+        MsgHit msg = (MsgHit) msgBase;
+        // 找坦克
+        SyncTank tank = (SyncTank) GetTank(msg.id);
+        if (tank == null)
         {
-            return GetTank(GameMain.id);
+            return;
         }
 
-        public static void Reset()
+        // 同步
+        tank.Attacked(msg.damage);
+    }
+
+    public static void AddTank(string id, BaseTank tank)
+    {
+        tanks[id] = tank;
+    }
+
+    public static void RemoveTank(string id)
+    {
+        tanks.Remove(id);
+    }
+
+    public static BaseTank GetTank(string id)
+    {
+        if (tanks.ContainsKey(id))
         {
-            foreach (BaskTank tank in tanks.Values)
-            {
-                Destroy(tank.gameObject);
-            }
-            tanks.Clear();
+            return tanks[id];
         }
-        
 
-        private static void OnMsgBattleResult(MsgBase msgBase)
+        return null;
+    }
+
+    public static BaseTank GetCtrlTank()
+    {
+        return GetTank(GameMain.id);
+    }
+
+    public static void Reset()
+    {
+        foreach (BaseTank tank in tanks.Values)
         {
-            MsgBattleResult msg = (MsgBattleResult) msgBase;
-            bool isWin = false;
-            BaskTank tank = GetCtrlTank();
-            if (tank !=null && tank.camp == msg.winCamp)
-            {
-                isWin = true;
-            }
-            PanelManager.Open<ResultPanel>(isWin);
-        }
-
-        private static void OnMsgLeaveBattle(MsgBase msgBase)
-        {
-            MsgLeaveBattle msg = (MsgLeaveBattle) msgBase;
-            // 查找坦克
-            BaskTank tank = GetTank(msg.id);
-            if (tank == null)
-            {
-                return;
-            }
-
-            RemoveTank(msg.id);
             Destroy(tank.gameObject);
         }
 
-        public static void OnMsgEnterBattle(MsgBase msgBase)
+        tanks.Clear();
+    }
+
+
+    private static void OnMsgBattleResult(MsgBase msgBase)
+    {
+        MsgBattleResult msg = (MsgBattleResult) msgBase;
+        bool isWin = false;
+        BaseTank tank = GetCtrlTank();
+        if (tank != null && tank.camp == msg.winCamp)
         {
-            MsgEnterBattle msg = (MsgEnterBattle) msgBase;
-            EnterBattle(msg);
+            isWin = true;
         }
 
-        public static void EnterBattle(MsgEnterBattle msg)
+        PanelManager.Open<ResultPanel>(isWin);
+    }
+
+    private static void OnMsgLeaveBattle(MsgBase msgBase)
+    {
+        MsgLeaveBattle msg = (MsgLeaveBattle) msgBase;
+        // 查找坦克
+        BaseTank tank = GetTank(msg.id);
+        if (tank == null)
         {
-            BattleManager.Reset();
-            PanelManager.Close("RoomPanel");
-            PanelManager.Close("ResultPanel");
-            for (int i = 0; i < msg.tanks.Length; i++)
-            {
-                GenerateTank(msg.tanks[i]);
-            }
+            return;
         }
 
-        private static void GenerateTank(TankInfo tankInfo)
+        RemoveTank(msg.id);
+        Destroy(tank.gameObject);
+    }
+
+    public static void OnMsgEnterBattle(MsgBase msgBase)
+    {
+        MsgEnterBattle msg = (MsgEnterBattle) msgBase;
+        EnterBattle(msg);
+    }
+
+    public static void EnterBattle(MsgEnterBattle msg)
+    {
+        BattleManager.Reset();
+        PanelManager.Close("RoomPanel");
+        PanelManager.Close("ResultPanel");
+        for (int i = 0; i < msg.tanks.Length; i++)
         {
-            string objName = "Tank_" + tankInfo.id;
-            GameObject tankObj = new GameObject(objName);
-            //AddComponent
-            BaskTank tank = null;
-            if (tankInfo.id == GameMain.id)
-            {
-                tank = tankObj.AddComponent<CtrlTank>();
-            }
-            else
-            {
-                tank = tankObj.AddComponent<SyncTank>();
-            }
-            // camera
-            if (tankInfo.id == GameMain.id)
-            {
-                CameraFollow cf = tankObj.AddComponent<CameraFollow>();
-            }
-
-            tank.camp = tankInfo.camp;
-            tank.id = tankInfo.id;
-            tank.hp = tankInfo.hp;
-            // Pos
-            Vector3 pos = new Vector3(tankInfo.x,tankInfo.y,tankInfo.z);
-            Vector3 rot = new Vector3(tankInfo.ex,tankInfo.ey,tankInfo.ez);
-            tank.transform.position = pos;
-            tank.transform.eulerAngles = rot;
-            //init
-            if (tankInfo.camp == 1)
-            {
-                tank.Init("tankPrefab");
-            }
-            else
-            {
-                tank.Init("tankPrefab2");
-            }
-
-            AddTank(tankInfo.id, tank);
+            GenerateTank(msg.tanks[i]);
         }
+    }
+
+    private static void GenerateTank(TankInfo tankInfo)
+    {
+        string objName = "Tank_" + tankInfo.id;
+        GameObject tankObj = new GameObject(objName);
+        //AddComponent
+        BaseTank tank = null;
+        if (tankInfo.id == GameMain.id)
+        {
+            tank = tankObj.AddComponent<CtrlTank>();
+        }
+        else
+        {
+            tank = tankObj.AddComponent<SyncTank>();
+        }
+
+        // camera
+        if (tankInfo.id == GameMain.id)
+        {
+            CameraFollow cf = tankObj.AddComponent<CameraFollow>();
+        }
+
+        tank.camp = tankInfo.camp;
+        tank.id = tankInfo.id;
+        tank.hp = tankInfo.hp;
+        // Pos
+        Vector3 pos = new Vector3(tankInfo.x, tankInfo.y, tankInfo.z);
+        Vector3 rot = new Vector3(tankInfo.ex, tankInfo.ey, tankInfo.ez);
+        tank.transform.position = pos;
+        tank.transform.eulerAngles = rot;
+        //init
+        if (tankInfo.camp == 1)
+        {
+            tank.Init("tankPrefab");
+        }
+        else
+        {
+            tank.Init("tankPrefab2");
+        }
+
+        AddTank(tankInfo.id, tank);
     }
 }

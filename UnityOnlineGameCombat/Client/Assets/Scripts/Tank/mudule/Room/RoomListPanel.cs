@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace Tank
-{
-	public class RoomListPanel : BasePanel {
+public class RoomListPanel : BasePanel {
 	//账号文本
 	private Text idText;
 	//战绩文本
@@ -162,5 +160,4 @@ namespace Tank
 		}
 	}
 
-}
 }
