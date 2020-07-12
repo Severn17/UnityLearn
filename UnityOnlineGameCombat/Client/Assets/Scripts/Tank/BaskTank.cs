@@ -19,6 +19,8 @@ namespace Tank
         public float lastFireTime = 0;
 
         public float hp = 100;
+        public string id = "";
+        public int camp = 0;
         void Start()
         {
             

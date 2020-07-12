@@ -13,9 +13,12 @@
     }
 
     //临时数据，如：坐标
-    public int x;
-    public int y;
-    public int z;
+    public float x;
+    public float y;
+    public float z;
+    public float ex; 
+    public float ey; 
+    public float ez;
 
     //在那个房间
     public int roomId = -1;

@@ -16,7 +16,25 @@ public class Room {
 		FIGHT = 1 ,
 	}
 	public Status status = Status.PREPARE;
-
+	
+	//出生点位置配置
+	static float[,,] birthConfig = new float[2, 3, 6] {
+		//阵营1出生点
+		{
+			{-85.8f, 3.8f, -33.8f, 0, 24.9f, 0f},//出生点1
+			{-49.9f, 3.8f, -61.4f, 0, 21.4f, 0f},//出生点2
+			{-6.2f,  3.8f, -70.7f, 0, 21.9f, 0f},//出生点3
+		},
+		//阵营2出生点
+		{
+			{150f, 0f, 178.9f, 0, -156.8f, 0f},//出生点1
+			{105f, 0f, 216.5f, 0, -156.8f, 0f},//出生点2
+			{52.0f,0f, 239.2f, 0, -156.8f, 0f},//出生点3
+		},
+	};
+	
+	//上一次判断结果的时间
+	private long lastjudgeTime = 0;
 
 	//添加玩家
 	public bool AddPlayer(string id){
@@ -101,6 +119,13 @@ public class Room {
 		if(ownerId == player.id){
 			ownerId = SwitchOwner();
 		}
+		//战斗状态退出
+		if(status == Status.FIGHT){
+			player.data.lost++;
+			MsgLeaveBattle msg = new MsgLeaveBattle();
+			msg.id = player.id;
+			Broadcast(msg);
+		}
 		//房间为空
 		if(playerIds.Count == 0){
 			RoomManager.RemoveRoom(this.id);
@@ -153,6 +178,166 @@ public class Room {
 			i++;
 		}
 		return msg;
+	}
+
+	public bool CanStartBattle()
+	{
+		if (status != Status.PREPARE)
+		{
+			return false;
+		}
+
+		//计数
+		int count1 = 0;
+		int count2 = 0;
+		foreach (string id in playerIds.Keys)
+		{
+			Player player = PlayerManager.GetPlayer(id);
+			if (player.camp == 1)
+			{
+				count1++;
+			}
+
+			if (player.camp == 2)
+			{
+				count2++;
+			}
+		}
+
+		//选择
+		if (count1 < 1 || count2 < 1)
+		{
+			return false;
+		}
+		return true;
+	}
+	//初始化位置
+	private void SetBirthPos(Player player, int index){
+		int camp = player.camp;
+
+		player.x  = birthConfig[camp-1, index,0];
+		player.y  = birthConfig[camp-1, index,1];
+		player.z  = birthConfig[camp-1, index,2];
+		player.ex = birthConfig[camp-1, index,3];
+		player.ey = birthConfig[camp-1, index,4];
+		player.ez = birthConfig[camp-1, index,5];
+	}
+	//重置玩家战斗属性
+	private void ResetPlayers(){
+		//位置和旋转
+		int count1 = 0;
+		int count2 = 0;
+		foreach(string id in playerIds.Keys) {
+			Player player = PlayerManager.GetPlayer(id);
+			if(player.camp == 1){
+				SetBirthPos(player, count1);
+				count1++; 
+			}
+			else { 
+				SetBirthPos(player, count2);
+				count2++; 
+			}
+		}
+		//生命值
+		foreach(string id in playerIds.Keys) {
+			Player player = PlayerManager.GetPlayer(id);
+			player.hp = 100;
+		}
+	}
+	//玩家数据转成TankInfo
+	public TankInfo PlayerToTankInfo(Player player){
+		TankInfo tankInfo = new TankInfo();
+		tankInfo.camp = player.camp;
+		tankInfo.id = player.id;
+		tankInfo.hp = player.hp;
+
+		tankInfo.x  = player.x;
+		tankInfo.y  = player.y;
+		tankInfo.z  = player.z;
+		tankInfo.ex = player.ex;
+		tankInfo.ey = player.ey;
+		tankInfo.ez = player.ez;
+
+		return tankInfo;
+	}
+	//开战
+	public bool StartBattle() {
+		if(!CanStartBattle()){
+			return false;
+		}
+		//状态
+		status = Status.FIGHT;
+		//玩家战斗属性
+		ResetPlayers();
+		//返回数据
+		MsgEnterBattle msg = new MsgEnterBattle();
+		msg.mapId = 1;
+		msg.tanks = new TankInfo[playerIds.Count];
+
+		int i=0;
+		foreach(string id in playerIds.Keys) {
+			Player player = PlayerManager.GetPlayer(id);
+			msg.tanks[i] = PlayerToTankInfo(player);
+			i++;
+		}
+		Broadcast(msg);
+		return true;
+	}
+	//是否死亡
+	public bool IsDie(Player player){
+		return player.hp <= 0;
+	}
+	//胜负判断
+	public int Judgment(){
+		//存活人数
+		int count1 = 0;
+		int count2 = 0;
+		foreach(string id in playerIds.Keys) {
+			Player player = PlayerManager.GetPlayer(id);
+			if(!IsDie(player)){
+				if(player.camp == 1){count1++;};
+				if(player.camp == 2){count2++;};
+			}
+		}
+		//判断
+		if(count1 <= 0){
+			return 2;
+		}
+		else if(count2 <= 0){
+			return 1;
+		}
+		return 0;
+	}
+
+	public void Update()
+	{
+		//状态判断
+		if(status != Status.FIGHT){
+			return;
+		}
+		//时间判断
+		if(NetManager.GetTimeStamp() - lastjudgeTime < 10f){
+			return;
+		}
+		lastjudgeTime = NetManager.GetTimeStamp();
+		//胜负判断
+		int winCamp = Judgment();
+		//尚未分出胜负
+		if(winCamp == 0){
+			return;
+		}
+		//某一方胜利，结束战斗
+		status = Status.PREPARE;
+		//统计信息
+		foreach(string id in playerIds.Keys) {
+			Player player = PlayerManager.GetPlayer(id);
+			if(player.camp == winCamp){player.data.win++;}
+			else{player.data.lost++;}
+		}
+		//发送Result
+		MsgBattleResult msg = new MsgBattleResult();
+		msg.winCamp = winCamp;
+		Broadcast(msg);
 	}
 }
 

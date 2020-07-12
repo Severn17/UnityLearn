@@ -27,6 +27,7 @@ public partial class EventHandler
 
     public static void OnTimer(){
         CheckPing();
+        RoomManager.Update();
     }
 
     //Ping检查
