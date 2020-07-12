@@ -57,6 +57,7 @@
     <Compile Include="logic\PlayerManager.cs" />
     <Compile Include="logic\Room.cs" />
     <Compile Include="logic\RoomManager.cs" />
+    <Compile Include="logic\RoomMsgHandle.cs" />
     <Compile Include="logic\SysMsgHandler.cs" />
     <Compile Include="net\ByteArray.cs" />
     <Compile Include="net\ClientState.cs" />
