@@ -30,10 +30,6 @@ public class TimeManager: MonoBehaviour
       {
          tick -= Time.deltaTime;
          func(tick);
-         if (tick <= 0)
-         {
-            StopTime();
-         }
       }
    }
    

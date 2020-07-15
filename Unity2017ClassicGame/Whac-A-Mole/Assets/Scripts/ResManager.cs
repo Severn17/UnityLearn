@@ -2,8 +2,8 @@
 
 public class ResManager : MonoBehaviour
 {
-    public static void LoadPrefab(string path)
+    public static GameObject LoadPrefab(string path)
     {
-        Resources.Load<GameObject>(path);
+        return Resources.Load<GameObject>(path);
     }
 }
